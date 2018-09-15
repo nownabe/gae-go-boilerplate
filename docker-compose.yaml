@@ -1,0 +1,35 @@
+version: '3.3'
+
+services:
+
+  backend:
+    build:
+      context: ./backend
+    command:
+      - dev_appserver.py
+      - backend/app/app.yaml
+      - --support_datastore_emulator=True
+      - --storage_path=/storage
+      - --host=0.0.0.0
+      - --admin_host=0.0.0.0
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+      - target: 8000
+        published: 8000
+        protocol: tcp
+        mode: host
+    volumes:
+      - type: bind
+        source: .
+        target: /go/${PROJECT_PATH}
+      - type: volume
+        source: backend
+        target: /storage
+    working_dir: /go/${PROJECT_PATH}
+
+volumes:
+  backend:
+    driver: local
